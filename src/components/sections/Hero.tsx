@@ -93,10 +93,10 @@ export default function Hero() {
               </span>
             </motion.div>
 
-            {/* Headline */}
+            {/* Headline – espaços entre spans garantem leitura correta pelo Google */}
             <h1 className="font-display text-[clamp(3.8rem,9vw,8.5rem)] leading-[0.86] tracking-tight mb-10">
-              <span className="text-gradient block">Crochê</span>
-              <span className="text-brand-cream/80 italic block">que conta</span>
+              <span className="text-gradient block">Crochê </span>
+              <span className="text-brand-cream/80 italic block">que conta </span>
               <span className="text-brand-cream block">histórias</span>
             </h1>
 
