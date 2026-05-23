@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
-import { ShoppingBag, Menu, X, Instagram } from 'lucide-react'
+import { ShoppingBag, Menu, X, Instagram, Clock } from 'lucide-react'
 
 const NAV_LINKS = ['Coleção', 'Destaque', 'Sobre', 'Contato']
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [scrolled,  setScrolled]  = useState(false)
+  const [menuOpen,  setMenuOpen]  = useState(false)
+  const [cartOpen,  setCartOpen]  = useState(false)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60)
@@ -66,7 +67,8 @@ export default function Navbar() {
             </a>
 
             <button
-              aria-label="Carrinho de compras – 0 itens"
+              onClick={() => setCartOpen(true)}
+              aria-label="Carrinho de compras"
               className="relative text-brand-cream/60 hover:text-brand-gold transition-colors"
             >
               <ShoppingBag size={17} aria-hidden="true" />
@@ -90,6 +92,77 @@ export default function Navbar() {
           </div>
         </div>
       </motion.nav>
+
+      {/* ── Cart "em breve" popup ── */}
+      <AnimatePresence>
+        {cartOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              className="fixed inset-0 z-[60] bg-brand-black/60 backdrop-blur-sm"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              onClick={() => setCartOpen(false)}
+              aria-hidden="true"
+            />
+
+            {/* Modal */}
+            <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-label="Loja em breve"
+              className="fixed z-[61] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-sm glass-dark border border-brand-gold/20 rounded-2xl p-8 flex flex-col items-center text-center gap-5"
+              initial={{ opacity: 0, scale: 0.88, y: 20 }}
+              animate={{ opacity: 1, scale: 1,    y: 0  }}
+              exit={{   opacity: 0, scale: 0.92,  y: 10 }}
+              transition={{ duration: 0.32, ease: [0.76, 0, 0.24, 1] }}
+            >
+              {/* Ícone animado */}
+              <motion.div
+                className="w-16 h-16 rounded-full bg-brand-gold/10 border border-brand-gold/25 flex items-center justify-center"
+                animate={{ scale: [1, 1.07, 1] }}
+                transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                <Clock size={28} className="text-brand-gold" aria-hidden="true" />
+              </motion.div>
+
+              <div className="space-y-2">
+                <p className="font-body text-[10px] tracking-[0.45em] uppercase text-brand-gold/70">
+                  Em breve
+                </p>
+                <h2 className="font-display text-2xl text-brand-cream leading-tight">
+                  Loja online chegando em breve
+                </h2>
+                <p className="font-body text-brand-cream/50 text-sm leading-relaxed">
+                  Estamos preparando algo especial para você. Por enquanto, fale com a gente pelo
+                  WhatsApp para fazer seu pedido.
+                </p>
+              </div>
+
+              <a
+                href={`https://wa.me/558399190391?text=${encodeURIComponent('Olá! Gostaria de fazer um pedido na Zavina.')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setCartOpen(false)}
+                className="w-full flex items-center justify-center gap-2 bg-brand-gold text-brand-black py-3.5 font-body text-[10px] tracking-[0.35em] uppercase hover:bg-brand-gold-light transition-colors"
+              >
+                <ShoppingBag size={12} aria-hidden="true" />
+                Pedir pelo WhatsApp
+              </a>
+
+              <button
+                onClick={() => setCartOpen(false)}
+                className="font-body text-[10px] tracking-[0.3em] uppercase text-brand-cream/30 hover:text-brand-cream/60 transition-colors"
+                aria-label="Fechar"
+              >
+                Fechar
+              </button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Mobile menu */}
       <AnimatePresence>
