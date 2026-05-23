@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { ShoppingBag, Menu, X, Instagram } from 'lucide-react'
 
-const NAV_LINKS = ['Coleção', 'Destaque', 'Sobre']
+const NAV_LINKS = ['Coleção', 'Destaque', 'Sobre', 'Contato']
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)

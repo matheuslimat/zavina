@@ -29,6 +29,8 @@ const config: Config = {
         'spin-slow': 'spin 20s linear infinite',
         float: 'float 6s ease-in-out infinite',
         shimmer: 'shimmer 3s linear infinite',
+        marquee: 'marquee 32s linear infinite',
+        'marquee-rev': 'marquee-rev 32s linear infinite',
       },
       keyframes: {
         float: {
@@ -38,6 +40,14 @@ const config: Config = {
         shimmer: {
           '0%': { backgroundPosition: '-200% center' },
           '100%': { backgroundPosition: '200% center' },
+        },
+        marquee: {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+        'marquee-rev': {
+          '0%': { transform: 'translateX(-50%)' },
+          '100%': { transform: 'translateX(0%)' },
         },
       },
     },

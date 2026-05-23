@@ -2,39 +2,44 @@
 
 import { useState, useRef } from 'react'
 import Image from 'next/image'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import dynamic from 'next/dynamic'
 import { MessageCircle, Ruler, Star, Layers, ImageIcon } from 'lucide-react'
 import { featuredImage } from '@/lib/products'
 
 const FabricViewer = dynamic(() => import('@/components/three/FabricViewer'), {
   ssr: false,
-  loading: () => <div className="w-full h-full bg-brand-dark animate-pulse" />,
+  loading: () => <div className="w-full h-full bg-brand-dark animate-pulse rounded-3xl" />,
 })
 
 const COLORS = [
   { name: 'Terracota', hex: '#B87355' },
-  { name: 'Areia',    hex: '#C9A96E' },
-  { name: 'Sage',     hex: '#7A9E7E' },
-  { name: 'Creme',    hex: '#E8D5B7' },
+  { name: 'Areia',     hex: '#C9A96E' },
+  { name: 'Sage',      hex: '#7A9E7E' },
+  { name: 'Creme',     hex: '#E8D5B7' },
 ]
-const SIZES = ['P', 'M', 'G', 'GG']
+const SIZES    = ['P', 'M', 'G', 'GG']
 const FEATURES = [
-  { label: '100% Algodão', sub: 'Material premium' },
-  { label: 'Artesanal',   sub: 'Feito à mão' },
-  { label: '30 dias',     sub: 'Devolução gratuita' },
+  { label: 'Fio Anne 8',   sub: 'Círculo – mercerizado' },
+  { label: 'Artesanal',    sub: 'Feito à mão' },
+  { label: 'Entrega BR',   sub: 'Todo o Brasil' },
 ]
 
 type ViewMode = 'photo' | '3d'
 
 export default function FeaturedProduct() {
   const [selectedColor, setSelectedColor] = useState(COLORS[0])
-  const [selectedSize, setSelectedSize] = useState('')
-  const [viewMode, setViewMode] = useState<ViewMode>('photo')
+  const [selectedSize,  setSelectedSize]  = useState('')
+  const [viewMode,      setViewMode]      = useState<ViewMode>('photo')
   const ref = useRef<HTMLDivElement>(null)
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
-  const bgY = useTransform(scrollYProgress, [0, 1], [40, -40])
+  const bgY   = useTransform(scrollYProgress, [0, 1], [50, -50])
+  const imgY  = useTransform(scrollYProgress, [0, 1], [20, -20])
+
+  const waLink = `https://wa.me/558399190391?text=${encodeURIComponent(
+    'Olá! Tenho interesse na peça "Blusa Boho em Crochê". Qual o valor?'
+  )}`
 
   return (
     <section
@@ -51,80 +56,98 @@ export default function FeaturedProduct() {
           backgroundImage: 'radial-gradient(circle at 1px 1px, #C9A96E 1px, transparent 0)',
           backgroundSize: '48px 48px',
         }}
-        className="absolute inset-0 opacity-[0.035] pointer-events-none"
+        className="absolute inset-0 opacity-[0.032] pointer-events-none"
       />
 
       {/* Glow orb */}
       <div
         aria-hidden="true"
-        className="absolute -left-32 top-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full pointer-events-none"
+        className="absolute -left-40 top-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none"
         style={{
-          background: 'radial-gradient(circle, rgba(184,115,85,0.12) 0%, transparent 70%)',
-          filter: 'blur(60px)',
+          background: 'radial-gradient(circle, rgba(184,115,85,0.13) 0%, transparent 68%)',
+          filter: 'blur(70px)',
         }}
       />
 
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-14 items-center">
-          {/* Viewer: photo + 3D */}
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+
+          {/* ── Viewer ── */}
           <div className="scroll-reveal-left">
             <div className="relative aspect-square rounded-3xl overflow-hidden glass">
-              {/* Content */}
-              {viewMode === '3d' ? (
-                <FabricViewer color={selectedColor.hex} />
-              ) : (
-                <Image
-                  src={featuredImage}
-                  alt="Blusa Boho em Crochê – destaque da coleção Zavina"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  priority
-                />
-              )}
+
+              <AnimatePresence mode="wait">
+                {viewMode === '3d' ? (
+                  <motion.div
+                    key="3d"
+                    className="absolute inset-0"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <FabricViewer color={selectedColor.hex} />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="photo"
+                    className="absolute inset-0"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <motion.div className="absolute inset-0" style={{ y: imgY }}>
+                      <Image
+                        src={featuredImage}
+                        alt="Blusa Boho em Crochê – destaque da coleção Zavina"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 1024px) 100vw, 50vw"
+                        priority
+                      />
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {/* View toggle */}
-              <div className="absolute bottom-4 left-4 flex gap-2">
-                <button
-                  onClick={() => setViewMode('photo')}
-                  className={`flex items-center gap-1.5 text-[10px] px-3 py-2 rounded-full font-body tracking-widest uppercase transition-all ${
-                    viewMode === 'photo' ? 'bg-brand-gold text-brand-black' : 'glass-warm text-brand-cream/70'
-                  }`}
-                  aria-label="Ver foto do produto"
-                  aria-pressed={viewMode === 'photo'}
-                >
-                  <ImageIcon size={10} aria-hidden="true" />
-                  Foto
-                </button>
-                <button
-                  onClick={() => setViewMode('3d')}
-                  className={`flex items-center gap-1.5 text-[10px] px-3 py-2 rounded-full font-body tracking-widest uppercase transition-all ${
-                    viewMode === '3d' ? 'bg-brand-gold text-brand-black' : 'glass-warm text-brand-cream/70'
-                  }`}
-                  aria-label="Visualizar textura 3D interativa"
-                  aria-pressed={viewMode === '3d'}
-                >
-                  <Layers size={10} aria-hidden="true" />
-                  Textura 3D
-                </button>
+              <div className="absolute bottom-4 left-4 flex gap-2 z-10">
+                {([
+                  { mode: 'photo' as const, icon: <ImageIcon size={10} />, label: 'Foto' },
+                  { mode: '3d'   as const, icon: <Layers     size={10} />, label: 'Tecido 3D' },
+                ] as const).map(({ mode, icon, label }) => (
+                  <button
+                    key={mode}
+                    onClick={() => setViewMode(mode)}
+                    className={`flex items-center gap-1.5 text-[10px] px-3 py-2 rounded-full font-body tracking-widest uppercase transition-all ${
+                      viewMode === mode
+                        ? 'bg-brand-gold text-brand-black'
+                        : 'glass-warm text-brand-cream/65 hover:text-brand-cream'
+                    }`}
+                    aria-pressed={viewMode === mode}
+                  >
+                    {icon} {label}
+                  </button>
+                ))}
               </div>
 
-              {/* Color dot indicator */}
-              <div className="absolute top-4 right-4">
+              {/* Color indicator */}
+              <div className="absolute top-4 right-4 z-10">
                 <span
                   aria-hidden="true"
-                  className="w-3 h-3 rounded-full block animate-pulse"
+                  className="w-3 h-3 rounded-full block ring-1 ring-white/20"
                   style={{ background: selectedColor.hex }}
                 />
               </div>
             </div>
           </div>
 
-          {/* Info */}
+          {/* ── Info ── */}
           <div className="scroll-reveal-right space-y-7">
             {/* Stars */}
             <div className="flex items-center gap-1.5">
-              {[1, 2, 3, 4, 5].map((s) => (
+              {[1,2,3,4,5].map((s) => (
                 <Star key={s} size={13} aria-hidden="true" className="fill-brand-gold text-brand-gold" />
               ))}
               <span className="font-body text-brand-cream/40 text-xs ml-2">47 avaliações</span>
@@ -141,8 +164,10 @@ export default function FeaturedProduct() {
             </div>
 
             <p className="font-body text-brand-cream/55 leading-relaxed">
-              Feita à mão com fio 100% algodão, esta peça única combina técnicas tradicionais de
-              crochê com um design contemporâneo. Perfeita para qualquer ocasião especial.
+              Tecida em <span className="text-brand-gold/80">Fio Anne 8 da Círculo</span> —
+              algodão mercerizado com brilho acetinado natural que mantém o ponto firme lavagem
+              após lavagem. Design contemporâneo com técnicas tradicionais do crochê artesanal
+              brasileiro.
             </p>
 
             {/* Color selector */}
@@ -161,7 +186,7 @@ export default function FeaturedProduct() {
                     className={`w-8 h-8 rounded-full transition-all duration-200 ${
                       selectedColor.name === c.name
                         ? 'ring-2 ring-brand-gold ring-offset-2 ring-offset-brand-dark scale-110'
-                        : 'hover:scale-105 opacity-70 hover:opacity-100'
+                        : 'hover:scale-105 opacity-60 hover:opacity-100'
                     }`}
                     style={{ backgroundColor: c.hex }}
                   />
@@ -189,7 +214,7 @@ export default function FeaturedProduct() {
                     className={`w-11 h-11 font-body text-sm transition-all duration-200 ${
                       selectedSize === size
                         ? 'bg-brand-gold text-brand-black'
-                        : 'glass border border-brand-gold/20 text-brand-cream hover:border-brand-gold/55'
+                        : 'glass border border-brand-gold/20 text-brand-cream hover:border-brand-gold/50'
                     }`}
                   >
                     {size}
@@ -202,15 +227,15 @@ export default function FeaturedProduct() {
             <div className="flex items-center justify-between pt-2">
               <div>
                 <p className="font-body text-brand-cream/45 text-sm italic">Consulte o valor</p>
-                <p className="font-body text-brand-cream/30 text-xs mt-0.5">via WhatsApp</p>
+                <p className="font-body text-brand-cream/25 text-xs mt-0.5">via WhatsApp</p>
               </div>
               <motion.a
-                href={`https://wa.me/558399190391?text=${encodeURIComponent('Olá! Tenho interesse na peça "Blusa Boho em Crochê". Qual o valor?')}`}
+                href={waLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
-                className="flex items-center gap-2.5 px-8 py-4 font-body text-xs tracking-[0.3em] uppercase bg-brand-gold text-brand-black hover:bg-brand-gold-light transition-all duration-300"
+                className="flex items-center gap-2.5 px-8 py-4 font-body text-xs tracking-[0.3em] uppercase bg-brand-gold text-brand-black hover:bg-brand-gold-light transition-colors duration-300"
                 aria-label="Perguntar preço no WhatsApp"
               >
                 <MessageCircle size={14} aria-hidden="true" /> Perguntar Valor
