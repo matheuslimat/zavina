@@ -7,7 +7,7 @@ import FeaturedProduct from '@/components/sections/FeaturedProduct'
 import About from '@/components/sections/About'
 import Location from '@/components/sections/Location'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://zavinabrand.com.br'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://zavina.com.br'
 
 const jsonLd = {
   '@context': 'https://schema.org',

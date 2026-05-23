@@ -3,7 +3,7 @@ import { Cormorant_Garamond, DM_Sans } from 'next/font/google'
 import './globals.css'
 
 // ── Atualize esta URL quando o domínio definitivo estiver ativo ──
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://zavinabrand.com.br'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://zavina.com.br'
 
 const displayFont = Cormorant_Garamond({
   subsets: ['latin'],
