@@ -80,6 +80,10 @@ export const metadata: Metadata = {
     images: ['/images/ig/cropped-franja.jpg'],
   },
 
+  verification: {
+    google: '78LoXQf9xyta5b8r9772t8qO49_WugocZXmInGzt4Zs',
+  },
+
   robots: {
     index: true,
     follow: true,
